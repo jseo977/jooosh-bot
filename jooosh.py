@@ -9,7 +9,7 @@ from discord import FFmpegPCMAudio
 from discord.ext.commands import Bot
 from discord.utils import get
 
-TOKEN = 'OTEyNjY1ODc4MjcxNzU0Mjcw.YZzQVQ.qlVgFL8i38EexY54hZpkxs7tfVQ'
+TOKEN = os.getenv('DISCORD_TOKEN')
 
 bot = Bot(command_prefix = "josh!");
 
