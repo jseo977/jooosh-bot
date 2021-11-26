@@ -1,23 +1,16 @@
 # bot.py
-import os
 import random
 
 import discord
-from dotenv import load_dotenv
+from keep_alive import keep_alive
 
-load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-GUILD = os.getenv('DISCORD_GUILD')
 
 client = discord.Client()
 
 @client.event
 async def on_ready():
-    guild = discord.utils.get(client.guilds, name=GUILD)
-    print(
-        f'{client.user} is connected to the following guild:\n'
-        f'{guild.name}(id: {guild.id})'
-    )
+    print('jooosh-bot is alive!')
 
 @client.event
 async def on_message(message):
@@ -25,26 +18,9 @@ async def on_message(message):
     if msg.author == client.user:
         return
 
-    unethiquotes = [
-        'Happy Birthday Stephen!',
-        'But wa',
-        '...Boo!\n Woah, I almost fell off my chair',
-        'Iiiiiiiiincredible',
-        'I\'m Jooosh and I\'m from Christchurch',
-        'Oh guys \'joooshbag\' is already taken',
-        'You wouldn\'t get it',
-        'https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley',
-        'I also do linguistics',
-        'Ohhhh, right',
-        'I can\'t produce under pressure... you need to observe me',
-        '*Meme reference*',
-        'skmssdksdmk',
-        ':sobeautiful:',
-        'I don\'t listen to music when I shower',
-        'Stellaaaaaaaaaaaaa',
-        '*Keyboard Smash*',
-        'Horny bonk!'
-    ]
+    with open("josh_quotes.txt") as file:
+        unethiquotes = file.readlines()
+
     psr = ['paper 📄',' Scissors ✂️','Rock 🗿']
 
     if msg.content == 'psr!':
@@ -57,17 +33,11 @@ async def on_message(message):
 
     if msg.content == 'josh!help':
         await msg.channel.send(
-        ('Commands:\n'
-        'josh!quotes: Josh Quotes\n'
-        'josh!taunt: Random capitalisation on string\n'
-        'josh!what: Sends a random number of \'What\'s\n',
-        'flip!coin: flips a coin\n'
-        'psr!: Paper, scissors, rock'
-        )
+        'Commands:\njosh!quotes: Josh Quotes\njosh!add: Add quote\njosh!delete: delete quote\njosh!latest: Sends the latest quote\njosh!taunt: Random capitalisation on string\njosh!what: Sends a random number of \'What\'s\nflip!coin: flips a coin\npsr!: Paper, scissors, rock'
         )
 
     if msg.content.startswith("josh!"):
-        if msg.content.startswith('josh!quotes'):
+        if msg.content == 'josh!quotes':
             response = random.choice(unethiquotes)
             await msg.channel.send(response)
 
@@ -82,14 +52,25 @@ async def on_message(message):
             elif len(msgs) == 2 & int(msgs[1]):
                 await msg.channel.send("What"*int(msgs[1]))
 
-    if msg.content == "Stephen!":
-        await msg.channel.send("Hello, Stephen \nWe missed you")
+        if msg.content.startswith('josh!add'):
+            with open("josh_quotes.txt", "r+") as file:
+                file.write(f"{msg.content.lstrip('josh!add ')}\n")
+                unethiquotes = file.readlines()
+            await msg.channel.send(f"Learning: {msg.content.lstrip('josh!add')}")
 
-    if msg.content == "Asmitha!":
-        await msg.channel.send("Hello, Asmitha \nWe missed you")
+        if msg.content.startswith('josh!delete'):
+            with open("josh_quotes.txt", "r+") as file:
+                quotes = file.readlines()
+                file.seek(0)
+                for quote in quotes:
+                    if quote != msg.content.lstrip("josh!delete "):
+                        file.write(quote)
+                file.truncate()
+                unethiquotes = file.readlines()
+            await msg.channel.send(f"Forgetting: \'{msg.content.lstrip('josh!delete ')}\'")
     
-    if msg.content == "Stella!":
-        await msg.channel.send("Hello, Stella \nWe missed you")
+        if msg.content == 'josh!latest':
+            await msg.channel.send(unethiquotes[-1])
 
-
+keep_alive()
 client.run(TOKEN)
