@@ -1,10 +1,17 @@
 # bot.py
 import random
+#import asyncio
 
 import discord
 from keep_alive import keep_alive
 
-TOKEN = os.getenv('DISCORD_TOKEN')
+from discord import FFmpegPCMAudio
+from discord.ext.commands import Bot
+from discord.utils import get
+
+TOKEN = 'OTEyNjY1ODc4MjcxNzU0Mjcw.YZzQVQ.qlVgFL8i38EexY54hZpkxs7tfVQ'
+
+bot = Bot(command_prefix = "josh!");
 
 client = discord.Client()
 
@@ -33,7 +40,7 @@ async def on_message(message):
 
     if msg.content == 'josh!help':
         await msg.channel.send(
-        'Commands:\njosh!quotes: Josh Quotes\njosh!add: Add quote\njosh!delete: delete quote\njosh!latest: Sends the latest quote\njosh!taunt: Random capitalisation on string\njosh!what: Sends a random number of \'What\'s\nflip!coin: flips a coin\npsr!: Paper, scissors, rock'
+        'Commands:\njosh!quotes: Josh Quotes\njosh!add: Add quote\njosh!delete: delete quote\njosh!latest: Sends the latest quote\n\njosh!taunt: Random capitalisation on string\njosh!what: Sends a random number of \'What\'s\nflip!coin: flips a coin\npsr!: Paper, scissors, rock\n\njosh!sus: sus sound\njosh!hm: hm sound\njosh!congration: multiple Joshes clap for you'
         )
 
     if msg.content.startswith("josh!"):
@@ -72,5 +79,57 @@ async def on_message(message):
         if msg.content == 'josh!latest':
             await msg.channel.send(unethiquotes[-1])
 
+    if msg.content == 'josh!hm':
+        channel = message.author.voice.channel
+        if not channel:
+            await channel.send("You are not connected to a voice channel")
+            return
+        voice = get(client.voice_clients, guild=channel.guild)
+        if voice and voice.is_connected():
+            await voice.move_to(channel)
+        else:
+            voice = await channel.connect()
+        source = FFmpegPCMAudio('rickroll.mp3')
+        player = voice.play(source)
+
+    if msg.content == 'josh!sus':
+        channel = message.author.voice.channel
+        if not channel:
+            await channel.send("You are not connected to a voice channel")
+            return
+        voice = get(client.voice_clients, guild=channel.guild)
+        if voice and voice.is_connected():
+            await voice.move_to(channel)
+        else:
+            voice = await channel.connect()
+        source = FFmpegPCMAudio('sus.mp3')
+        player = voice.play(source)
+
+    if msg.content == 'josh!roast':
+        channel = message.author.voice.channel
+        if not channel:
+            await channel.send("You are not connected to a voice channel")
+            return
+        voice = get(client.voice_clients, guild=channel.guild)
+        if voice and voice.is_connected():
+            await voice.move_to(channel)
+        else:
+            voice = await channel.connect()
+        source = FFmpegPCMAudio('roast.mp3')
+        player = voice.play(source)
+
+    if msg.content == 'josh!congration':
+        channel = message.author.voice.channel
+        if not channel:
+            await channel.send("You are not connected to a voice channel")
+            return
+        voice = get(client.voice_clients, guild=channel.guild)
+        if voice and voice.is_connected():
+            await voice.move_to(channel)
+        else:
+            voice = await channel.connect()
+        source = FFmpegPCMAudio('congration.mp3')
+        player = voice.play(source)
+          
 keep_alive()
 client.run(TOKEN)
